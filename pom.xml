@@ -13,6 +13,12 @@
         <javafx.version>21.0.8</javafx.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonar.projectKey>otp2_week4</sonar.projectKey>
+        <sonar.sources>src/main/java</sonar.sources>
+        <sonar.tests>src/test/java</sonar.tests>
+        <sonar.java.binaries>target/classes</sonar.java.binaries>
+        <sonar.java.test.binaries>target/test-classes</sonar.java.test.binaries>
+        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.exclusions>src/main/java/app/ShoppingCartApp.java,src/main/java/controllers/**</sonar.coverage.exclusions>
     </properties>
     <dependencies>
         <!-- JavaFX -->
@@ -155,6 +161,12 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>app/ShoppingCartApp*</exclude>
+                                <exclude>controllers/*</exclude>
+                            </excludes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

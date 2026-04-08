@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import services.CartItem;
 import services.CartService;
 import services.LocalizationService;
 
@@ -27,6 +28,7 @@ public class ShoppingCartController {
     private static final String LANGUAGE_SWEDISH = "Swedish";
     private static final String LANGUAGE_JAPANESE = "Japanese";
     private static final String LANGUAGE_ARABIC = "Arabic";
+    private static final String RESULT_KEY = "result";
     private static final String DEFAULT_TOTAL_LABEL = "Total";
     private static final String DEFAULT_LANGUAGE_LABEL = "Select the language:";
     private static final String DEFAULT_ITEMS_PROMPT = "Enter number of items:";
@@ -108,7 +110,7 @@ public class ShoppingCartController {
         lblItemCount.setText(localizedStrings.getOrDefault("prompt.items", DEFAULT_ITEMS_PROMPT));
         btnGenerate.setText(localizedStrings.getOrDefault("button.generate", "Enter items"));
         btnCalculate.setText(localizedStrings.getOrDefault("button.calculate", DEFAULT_CALCULATE_LABEL));
-        lblTotal.setText(localizedStrings.getOrDefault("result", DEFAULT_TOTAL_RESULT) + " " + formatCurrency(0.0));
+        lblTotal.setText(localizedStrings.getOrDefault(RESULT_KEY, DEFAULT_TOTAL_RESULT) + " " + formatCurrency(0.0));
         txtItemCount.setPromptText(localizedStrings.getOrDefault("prompt.items", DEFAULT_ITEMS_PROMPT));
     }
 
@@ -147,7 +149,7 @@ public class ShoppingCartController {
         txtQuantity.setPromptText(itemQuantityPrompt + " " + index);
         txtQuantity.setPrefWidth(100);
 
-        Label lblItemCost = new Label(localizedStrings.getOrDefault("result", DEFAULT_TOTAL_LABEL) + ": " + formatCurrency(0.0));
+        Label lblItemCost = new Label(localizedStrings.getOrDefault(RESULT_KEY, DEFAULT_TOTAL_LABEL) + ": " + formatCurrency(0.0));
         lblItemCost.setPrefWidth(140);
 
         HBox row = new HBox(10, lblPrice, txtPrice, lblQuantity, txtQuantity, lblItemCost);
@@ -158,7 +160,7 @@ public class ShoppingCartController {
     @FXML
     private void handleCalculate() {
         double total = 0.0;
-        List<CartService.CartItem> cartItems = new ArrayList<>();
+        List<CartItem> cartItems = new ArrayList<>();
 
         try {
             for (var node : itemsContainer.getChildren()) {
@@ -168,13 +170,13 @@ public class ShoppingCartController {
 
                     double itemTotal = calculateItemCost(price, quantity);
                     total += itemTotal;
-                    cartItems.add(new CartService.CartItem(data.index, price, quantity, itemTotal));
+                    cartItems.add(new CartItem(data.index, price, quantity, itemTotal));
 
-                    data.lblTotal.setText(localizedStrings.getOrDefault("result", DEFAULT_TOTAL_RESULT) + " " + formatCurrency(itemTotal));
+                    data.lblTotal.setText(localizedStrings.getOrDefault(RESULT_KEY, DEFAULT_TOTAL_RESULT) + " " + formatCurrency(itemTotal));
                 }
             }
 
-            lblTotal.setText(localizedStrings.getOrDefault("result", DEFAULT_TOTAL_RESULT) + " " + formatCurrency(total));
+            lblTotal.setText(localizedStrings.getOrDefault(RESULT_KEY, DEFAULT_TOTAL_RESULT) + " " + formatCurrency(total));
             saveCart(cartItems, total);
 
         } catch (NumberFormatException exception) {
@@ -182,7 +184,7 @@ public class ShoppingCartController {
         }
     }
 
-    private void saveCart(List<CartService.CartItem> cartItems, double total) {
+    private void saveCart(List<CartItem> cartItems, double total) {
         try {
             CART_SERVICE.saveCart(cartItems.size(), total, LocalizationService.toLanguageCode(currentLocale), cartItems);
         } catch (SQLException exception) {

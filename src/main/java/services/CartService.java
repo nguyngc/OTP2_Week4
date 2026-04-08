@@ -73,37 +73,6 @@ public class CartService {
             statement.executeBatch();
         }
     }
-
-    public static final class CartItem {
-        private final int itemNumber;
-        private final double price;
-        private final int quantity;
-        private final double subtotal;
-
-        public CartItem(int itemNumber, double price, int quantity, double subtotal) {
-            this.itemNumber = itemNumber;
-            this.price = price;
-            this.quantity = quantity;
-            this.subtotal = subtotal;
-        }
-
-        public int itemNumber() {
-            return itemNumber;
-        }
-
-        public double price() {
-            return price;
-        }
-
-        public int quantity() {
-            return quantity;
-        }
-
-        public double subtotal() {
-            return subtotal;
-        }
-    }
-
     private void rollbackQuietly(Connection connection, SQLException originalException) {
         try {
             connection.rollback();

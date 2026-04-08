@@ -13,7 +13,7 @@ FROM --platform=linux/amd64 eclipse-temurin:21-jre
 ENV DISPLAY=host.docker.internal:0
 ENV DB_HOST=host.docker.internal
 
-# Install dependencies for JavaFX (GTK, X11, OpenGL)
+# Install dependencies for JavaFX (GTK, X11, OpenGL) and JavaFX SDK
 RUN apt-get update && apt-get install -y \
     libgtk-3-0 \
     libxext6 \
@@ -24,18 +24,15 @@ RUN apt-get update && apt-get install -y \
     libgl1-mesa-dri \
     wget \
     unzip \
-    && rm -rf /var/lib/apt/lists/*
-
-# Download JavaFX SDK for Linux
-RUN wget https://download2.gluonhq.com/openjfx/21.0.1/openjfx-21.0.1_linux-x64_bin-sdk.zip \
+    && wget https://download2.gluonhq.com/openjfx/21.0.1/openjfx-21.0.1_linux-x64_bin-sdk.zip \
     && unzip openjfx-21.0.1_linux-x64_bin-sdk.zip \
     && mv javafx-sdk-21.0.1 /opt/javafx \
-    && rm openjfx-21.0.1_linux-x64_bin-sdk.zip
+    && rm openjfx-21.0.1_linux-x64_bin-sdk.zip \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy JAR from build stage
 COPY --from=build /app/target/ShoppingCartApp.jar app.jar
 
 # Run JavaFX with module-path
 CMD ["java", "--module-path", "/opt/javafx/lib", "--add-modules", "javafx.controls,javafx.fxml", "--add-opens", "java.base/java.lang=ALL-UNNAMED", "-jar", "app.jar"]
-
 
